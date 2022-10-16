@@ -1,5 +1,4 @@
 import os
-import re
 import subprocess
 import sys
 
@@ -119,7 +118,7 @@ class CMakeBuild(build_ext):
 setup(
     name="CxGNN-DL",
     version="0.0.1",
-    packages=find_packages(),
-    ext_modules=[CMakeExtension("cxgnndl")],
+    packages=find_packages(include=['cxgnndl', 'cxgnndl.*']),
+    ext_modules=[CMakeExtension("cxgnndl_backend")],
     cmdclass={"build_ext": CMakeBuild},
 )

@@ -33,7 +33,7 @@ void init_batch(py::module &m) {
 }
 
 void init_fastgraph(py::module &m) {
-  py::class_<FastGraph>(m, "FastGraph")
+  py::class_<FastGraph>(m, "CXGDL")
       .def(py::init<const std::string &>())
       .def("get_batch", &FastGraph::get_batch)
       .def("start", &FastGraph::start)
@@ -48,7 +48,7 @@ void init_util(py::module &m) {
         "Show memory usage of current proc");
 }
 
-PYBIND11_MODULE(cxgnndl, m) {
+PYBIND11_MODULE(cxgnndl_backend, m) {
   m.doc() = "A Supa Fast Graph Loader";
   init_batch(m);
   init_fastgraph(m);
