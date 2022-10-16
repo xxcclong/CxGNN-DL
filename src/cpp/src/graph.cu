@@ -87,7 +87,6 @@ Graph::Graph(Yaml::Node &config) : config(config) {
 
   // load label
   string label_path = dataset_path + "/processed/node_labels.dat";
-  showCpuMemCurrProc();
   if (!fexist(label_path)) {
     SPDLOG_WARN("Synthetic label {}", num_node_);
     label.resize(num_node_);
@@ -106,7 +105,6 @@ Graph::Graph(Yaml::Node &config) : config(config) {
   }
   // load CSR
   SPDLOG_WARN("Read/Dump CSR file");
-  showCpuMemCurrProc();
   if (!fexist(csr_ptr_path) || !fexist(csr_idx_path)) {
     toCSR();
     FileHandler csr_ptr_handler(csr_ptr_path, FileType::mmap_write);
@@ -118,17 +116,13 @@ Graph::Graph(Yaml::Node &config) : config(config) {
   } else {
     FileHandler csr_ptr_handler(csr_ptr_path);
     csr_ptr_handler.readAllToVec<Index>(csr_ptr);
-    showCpuMemCurrProc();
     FileHandler csr_idx_handler(csr_idx_path);
     csr_idx_handler.readAllToVec<Index>(csr_idx);
-    showCpuMemCurrProc();
     num_edge_ = csr_idx.size();
   }
   SPDLOG_WARN("{} {} {} {}", csr_ptr.size(), csr_ptr.back(), csr_idx.size(),
               csr_idx.back());
   subgraph_index = SubgraphIndex(num_node_, true);
-  SPDLOG_WARN("Done");
-  showCpuMemCurrProc();
   csr_avail_ = true;
 }
 

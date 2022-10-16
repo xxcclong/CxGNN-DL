@@ -1,6 +1,7 @@
 defaults:
   - dataset: papers100M
   - sampler: neighbor
+type: cxg
 num_device: 1
 device: cuda:1
 performance:

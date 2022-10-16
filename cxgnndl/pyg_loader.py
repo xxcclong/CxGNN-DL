@@ -1,4 +1,3 @@
-from ogb.nodeproppred import PygNodePropPredDataset
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.utils import to_undirected
 import torch
@@ -6,6 +5,7 @@ import torch
 
 class PyGLoader:
     def __init__(self, config):
+        from ogb.nodeproppred import PygNodePropPredDataset
         self.dataset = PygNodePropPredDataset(
             name=config.dataset.name, root=config.dataset.path)
         self.data = self.dataset[0]

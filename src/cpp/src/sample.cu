@@ -14,7 +14,7 @@
 #include "timer.h"
 
 shared_ptr<Sampler> Sampler::create(Yaml::Node &config) {
-  std::string sampler = config["sampler"].As<string>();
+  std::string sampler = config["name"].As<string>();
   if (sampler == "neighbor")
     return make_shared<CpuNeighborSampler>(config);
   else if (sampler == "khop")

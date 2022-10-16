@@ -1,4 +1,5 @@
 train:
+  name: neighbor
   num_layer: 3
   fanouts:
     - 10
@@ -8,6 +9,7 @@ train:
   replace: False
   self_loop: True
 eval:
+  name: neighbor
   num_layer: 3
   fanouts:
     - 30

@@ -4,7 +4,7 @@ from .pyg_loader import PyGLoader
 
 
 def get_loader(config):
-    return loader_dict[config.loader.type](config)
+    return loader_dict[config.type](config)
 
 
 loader_dict = {
