@@ -1,0 +1,7 @@
+name: products
+path: /home/xgx/dataset/diskgnn/products
+split_type: sales_ranking
+symmetric: True
+num_classes: 47
+feature_dim: 100
+evaluator: acc

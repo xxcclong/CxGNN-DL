@@ -37,35 +37,26 @@ template <class T>
 class DatasetTemplate : public Dataset {
  public:
   DatasetTemplate(Yaml::Node &config) {
-    SPDLOG_WARN("Memory before full graph structure");
-    showCpuMemCurrProc();
     graph_ = make_shared<Graph>(config);
-    SPDLOG_WARN("Memory after full graph structure");
-    showCpuMemCurrProc();
     // basic information
     string dataset_path = config["dataset"]["path"].As<string>();
     string split_type = config["dataset"]["split_type"].As<string>();
     // open feature file
     string feature_path = dataset_path + "/processed/node_features.dat";
-    SPDLOG_INFO("Loading node features from {}", feature_path);
-    SPDLOG_INFO("Performance mode: {}",
-                config["performance"]["mode"].As<int>(2));
-    showCpuMemCurrProc();
-    SPDLOG_WARN("Read feature file");
-    FileType load_file_mode =
-        (FileType)(config["performance"]["mode"].As<int>(2));
-    if (config["performance"]["uvm"].As<int>(0)) {
-      SPDLOG_WARN("Using UVM, no need to load file");
-      load_file_mode = (FileType)(4);  // empty
+    SPDLOG_WARN("Loading node features from {}", feature_path);
+    int feat_mode = config["loading"]["feat_mode"].As<int>(-1);
+    FileType read_mode = FileType::empty;
+    if (feat_mode <= 1) read_mode = FileType::empty;
+    if (feat_mode == 2) read_mode = FileType::memory;
+    if (feat_mode == 3)
+      read_mode = FileType::mmap;
+    else {
+      ASSERTWITH(false, "feat_mode must be 0, 1, 2, or 3");
     }
-    feature_handler_ = make_shared<FileHandler>(feature_path, load_file_mode);
+    feature_handler_ = make_shared<FileHandler>(feature_path, read_mode);
     feature_handler_->openFile();
-    SPDLOG_WARN("Done");
-    showCpuMemCurrProc();
     feature_len_ =
         feature_handler_->filesize_ / sizeof(T) / graph_->getNumNode();
-    SPDLOG_INFO("v {} e {} feat {}", graph_->getNumNode(), graph_->getNumEdge(),
-                feature_len_);
   }
 
   void fetchData(const std::vector<Index> &index, int64_t feature_len,

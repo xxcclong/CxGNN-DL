@@ -1,0 +1,18 @@
+train:
+  num_layer: 3
+  fanouts:
+    - 10
+    - 15
+    - 20
+  batch_size: 4000
+  replace: False
+  self_loop: True
+eval:
+  num_layer: 3
+  fanouts:
+    - 30
+    - 30
+    - 30
+  batch_size: 100
+  replace: False
+  self_loop: True

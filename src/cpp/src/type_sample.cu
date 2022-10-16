@@ -11,9 +11,6 @@ SamplerReturnType CpuNeighborTypeSampler::postSample(
     const shared_ptr<Graph> &graph, GraphType type) {
   std::vector<Index> mask_in_sub(seed_nodes.size());
   std::iota(mask_in_sub.begin(), mask_in_sub.end(), 0);
-  if (sorted) {
-    ASSERTWITH(false, "Sorted not implemented");
-  }
   shared_ptr<Graph> sampled_graph = nullptr;
   if (type == GraphType::COO) {
     // generate edge_index

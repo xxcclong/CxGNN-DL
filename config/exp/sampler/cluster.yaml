@@ -1,0 +1,10 @@
+train:
+  batch_size: 6
+  gas: 0
+  replace: False
+  num_layer: 3
+eval:
+  batch_size: 6
+  gas: 0
+  replace: False
+  num_layer: 3

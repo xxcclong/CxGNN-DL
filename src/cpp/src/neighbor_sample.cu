@@ -12,7 +12,6 @@ CpuNeighborSampler::CpuNeighborSampler(Yaml::Node &config) {
     if (cnt > 10) throw std::runtime_error("Too many layer fanouts");
   }
   replace = config["replace"].As<bool>(false);
-  sorted = config["sorted"].As<bool>(false);
   batch_size_ = config["batch_size"].As<int>(0);
   self_loop = config["self_loop"].As<bool>(false);
   SPDLOG_INFO("batch size {}", batch_size_);
@@ -41,43 +40,6 @@ SamplerReturnType CpuNeighborSampler::postSample(
     GraphType type) {
   std::vector<Index> mask_in_sub(seed_nodes.size());
   std::iota(mask_in_sub.begin(), mask_in_sub.end(), 0);
-  if (sorted) {
-    std::vector<Index> perm(subgraph_index.sub_to_full.size());
-    std::iota(perm.begin(), perm.end(), 0);
-    std::stable_sort(perm.begin(), perm.end(), [&](Index i, Index j) {
-      return subgraph_index.sub_to_full[i] < subgraph_index.sub_to_full[j];
-    });
-    std::vector<Index> perm_inv(perm.size());
-    for (Index i = 0; i < perm.size(); ++i) perm_inv[perm[i]] = i;
-    std::vector<Index> new_sub_to_full(subgraph_index.sub_to_full.size());
-    for (Index i = 0; i < subgraph_index.sub_to_full.size(); ++i)
-      new_sub_to_full[i] = subgraph_index.sub_to_full[perm[i]];
-    subgraph_index.sub_to_full = new_sub_to_full;
-    for (auto &pair : subgraph_index.full_to_sub)
-      pair.second = perm_inv[pair.second];
-    for (Index i = 0; i < mask_in_sub.size(); ++i)
-      mask_in_sub[i] = perm_inv[mask_in_sub[i]];
-    if (type == GraphType::COO) {
-      std::vector<Index> new_src(src.size());
-      std::vector<Index> new_dest(dest.size());
-      for (Index i = 0; i < src.size(); ++i) new_src[i] = perm_inv[src[i]];
-      for (Index i = 0; i < dest.size(); ++i) new_dest[i] = perm_inv[dest[i]];
-      src = new_src;
-      dest = new_dest;
-    } else {
-      std::vector<Index> new_ptr(dest.size(), 0);
-      std::vector<Index> new_idx(src.size());
-      for (Index new_node = 0; new_node < new_ptr.size() - 1; ++new_node) {
-        Index old_node = perm[new_node];
-        Index num_neighbor = dest[old_node + 1] - dest[old_node];
-        new_ptr[new_node + 1] = new_ptr[new_node] + num_neighbor;
-        for (Index i = 0; i < num_neighbor; ++i)
-          new_idx[new_ptr[new_node] + i] = perm_inv[src[dest[old_node] + i]];
-      }
-      src = new_idx;
-      dest = new_ptr;
-    }
-  }
   shared_ptr<Graph> sampled_graph = nullptr;
   if (type == GraphType::COO)
     src.insert(src.end(), std::make_move_iterator(dest.begin()),

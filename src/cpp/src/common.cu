@@ -102,21 +102,3 @@ double getAverageTimeWithWarmUp(const std::function<void()> &f) {
   }
   return totalTime / nRuns;
 }
-
-void checkConfig(Yaml::Node &config) {
-  SPDLOG_WARN("train-load: num-thread {} max_in_flight {}",
-              config["loader"]["train"]["num_thread"].As<int>(-1),
-              config["loader"]["train"]["max_in_flight"].As<int>(-1));
-  SPDLOG_WARN(
-      "train-transfer: num-thread {} max_in_flight {}",
-      config["loader"]["train"]["transfer"]["num_thread"].As<int>(-1),
-      config["loader"]["train"]["transfer"]["max_in_flight"].As<int>(-1));
-  SPDLOG_WARN("Performace: mode {} graph-type {} sync {} replace {}",
-              config["performance"]["mode"].As<int>(-1),
-              config["performance"]["output_graph_type"].As<std::string>(),
-              config["performance"]["sync"].As<bool>(true));
-  SPDLOG_WARN("Loader: batchsize {} replace {} symmertric {}",
-              config["loader"]["train"]["batch_size"].As<int>(-1),
-              config["loader"]["train"]["replace"].As<bool>(false),
-              config["dataset"]["symmertric"].As<bool>(1));
-}

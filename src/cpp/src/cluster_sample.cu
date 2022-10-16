@@ -4,7 +4,7 @@
 ClusterSampler::ClusterSampler(Yaml::Node &config) {
   batch_size_ = config["batch_size"].As<int>(0);
   num_layers_ = config["num_layer"].As<int>(0);
-  use_gas = (ClusterAggrType)config["gas"].As<int>(0);
+  cluster_mode = (ClusterAggrType)config["gas"].As<int>(0);
   ASSERT(batch_size_ > 0);
   ASSERT(num_layers_ > 0);
 }
@@ -30,7 +30,7 @@ SamplerReturnType ClusterSampler::sample(const shared_ptr<Graph> &graph,
   }
   Index num_seed = seed_nodes.size();
   std::shared_ptr<Graph> ret_graph = nullptr;
-  if (use_gas == ClusterAggrType::GAS) {
+  if (cluster_mode == ClusterAggrType::GAS) {
     std::vector<Index> src, dest;
     dest.push_back(0);
     for (Index i = 0; i < seed_nodes.size(); ++i) {
@@ -57,7 +57,7 @@ SamplerReturnType ClusterSampler::sample(const shared_ptr<Graph> &graph,
     ret_graph->setNumEdgeInLayer(std::move(num_edge_in_layer));
     ret_graph->setSubgraphIdx(subgraph_index);
     ret_graph->setParentGraph(graph);
-  } else if (use_gas == ClusterAggrType::ClusterGCN) {
+  } else if (cluster_mode == ClusterAggrType::ClusterGCN) {
     ret_graph = graph->induce(subgraph_index);
     Index num_node = ret_graph->getNumNode();
     Index num_edge = ret_graph->getNumEdge();
@@ -73,7 +73,7 @@ SamplerReturnType ClusterSampler::sample(const shared_ptr<Graph> &graph,
                 seed_nodes.size());
     ret_graph->setLayerInfo(std::move(num_node_in_layer),
                             std::move(num_edge_in_layer));
-  } else if (use_gas == ClusterAggrType::GraphFM) {
+  } else if (cluster_mode == ClusterAggrType::GraphFM) {
     for (Index i = 0; i < seed_nodes.size(); ++i) {
       Index full_id = seed_nodes[i];
       Index begin = graph->csr_ptr[full_id], end = graph->csr_ptr[full_id + 1];

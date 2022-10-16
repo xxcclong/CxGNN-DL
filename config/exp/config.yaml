@@ -1,0 +1,25 @@
+defaults:
+  - dataset: papers100M
+  - sampler: neighbor
+num_device: 1
+device: cuda:1
+performance:
+  bind_method: 0
+  num_thread: 24
+  max_in_flight: 48
+  transfer:
+    num_thread: 4
+    max_in_flight: 4
+testing:
+  train_shuffle: True
+  eval_shuffle: False
+  num_val_samples: -1
+  num_test_samples: -1
+loading:
+  feat_mode: 0 # 0: no feat; 1: uvm; 2: memory; 3: mmap
+util:
+  log_level: 2
+compute_schedule:
+  iter_limit: 10
+output:
+  graph_type: CSR_Layer

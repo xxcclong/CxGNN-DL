@@ -19,11 +19,7 @@ shared_ptr<AbstractLoader> AbstractLoader::create(Yaml::Node &config,
                                                   shared_ptr<Dataset> dataset,
                                                   shared_ptr<Split> split,
                                                   std::string name) {
-  std::string type = config["loader"][name]["type"].As<std::string>("");
-  if (type == "naive")
-    return std::make_shared<NaiveLoader>(config, dataset, split, name);
-  else
-    ASSERTWITH(0, "invalid loader type {}", type);
+  return std::make_shared<NaiveLoader>(config, dataset, split, name);
 }
 
 NaiveLoader::NaiveLoader(Yaml::Node &config, shared_ptr<Dataset> dataset,
@@ -31,15 +27,15 @@ NaiveLoader::NaiveLoader(Yaml::Node &config, shared_ptr<Dataset> dataset,
     : AbstractLoader(config, dataset, split, name) {
   initMultiThread(config);
   initTransferer(config);
-  Index batch_size = config["loader"][name]["batch_size"].As<Index>(1);
+  Index batch_size = config["sampler"][name]["batch_size"].As<Index>(1);
   num_iters = (split->num_split_node + batch_size - 1) / batch_size;
 }
 
 void NaiveLoader::initMultiThread(Yaml::Node &config) {
-  num_threads = config["loader"][name]["num_thread"].As<int>();
-  int max_in_flight = config["loader"][name]["max_in_flight"].As<int>(-1);
+  num_threads = config["performance"]["num_thread"].As<int>();
+  int max_in_flight = config["performance"]["max_in_flight"].As<int>(-1);
   int bind_method =
-      config["loader"]["bind_method"].As<int>(0);  // default no bind
+      config["performance"]["bind_method"].As<int>(0);  // default no bind
   ASSERT(max_in_flight != -1);
   for (int i = 0; i < num_threads; ++i) {
     worker_vec_.push_back(new BatchWorker(config, dataset, name));
@@ -53,11 +49,11 @@ void NaiveLoader::initMultiThread(Yaml::Node &config) {
 
 void NaiveLoader::initTransferer(Yaml::Node &config) {
   transfer_num_threads =
-      config["loader"][name]["transfer"]["num_thread"].As<int>(-1);
+      config["performance"]["transfer"]["num_thread"].As<int>(-1);
   int transfer_max_in_flight =
-      config["loader"][name]["transfer"]["max_in_flight"].As<int>(-1);
+      config["performance"]["transfer"]["max_in_flight"].As<int>(-1);
   int bind_method =
-      config["loader"]["bind_method"].As<int>(0);  // default no bind
+      config["performance"]["bind_method"].As<int>(0);  // default no bind
   int num_device = config["num_device"].As<int>(1);
   ASSERT(transfer_num_threads != -1);
   ASSERT(transfer_max_in_flight != -1);

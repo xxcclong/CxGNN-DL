@@ -57,7 +57,6 @@ class CpuNeighborSampler : public Sampler {
   Index batch_size_;
   bool replace = false;
   bool self_loop = false;
-  bool sorted = false;
 
   void preSample(vector<Index> &src, vector<Index> &dest,
                  SubgraphIndex &subgraph_index, const vector<Index> &seed_nodes,
@@ -127,7 +126,7 @@ class ClusterSampler : public Sampler {
  protected:
   Index batch_size_;  // number of clusters per batch
   int num_layers_;
-  ClusterAggrType use_gas = ClusterAggrType::ClusterGCN;
+  ClusterAggrType cluster_mode = ClusterAggrType::ClusterGCN;
 };
 
 #endif

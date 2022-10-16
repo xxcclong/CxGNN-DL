@@ -18,9 +18,8 @@ shared_ptr<Dataset> FastGraph::getDataset() { return dataset; }
 
 void FastGraph::initLogLevel(Yaml::Node &config) {
   spdlog::set_pattern("[%H-%M-%S-%e] [%n] [thread %t] [%s:%# %!] %v");
-  int log_level = config["performance"]["log_level"].As<int>();
-  ASSERTWITH(log_level >= 0, "specify log level {} {}", log_level,
-             config["performance"]["mode"].As<int>());
+  int log_level = config["util"]["log_level"].As<int>(-1);
+  ASSERTWITH(log_level >= 0 && log_level <= 6, "log level must be in [0, 6]");
   if (log_level == 0)
     spdlog::set_level(spdlog::level::debug);
   else if (log_level == 1)
@@ -30,13 +29,13 @@ void FastGraph::initLogLevel(Yaml::Node &config) {
 }
 
 void FastGraph::initSplit(Yaml::Node &config) {
-  bool train_shuffle = config["train"]["train_shuffle"].As<bool>(true);
-  bool eval_shuffle = config["train"]["eval_shuffle"].As<bool>(false);
-  int num_train_samples = config["train"]["num_train_samples"].As<int>(-1);
+  bool train_shuffle = config["testing"]["train_shuffle"].As<bool>(true);
+  bool eval_shuffle = config["testing"]["eval_shuffle"].As<bool>(false);
+  int num_train_samples = config["testing"]["num_train_samples"].As<int>(-1);
   train_split = std::make_shared<Split>(config, "train", num_train_samples,
                                         train_shuffle);
-  int num_val_samples = config["train"]["num_val_samples"].As<int>(-1);
-  int num_test_samples = config["train"]["num_test_samples"].As<int>(-1);
+  int num_val_samples = config["testing"]["num_val_samples"].As<int>(-1);
+  int num_test_samples = config["testing"]["num_test_samples"].As<int>(-1);
   val_split =
       std::make_shared<Split>(config, "valid", num_val_samples, eval_shuffle);
   test_split =
@@ -68,14 +67,11 @@ void FastGraph::start(const std::string &split_name) {
 shared_ptr<Batch> FastGraph::get_batch() { return loader->get_batch(); }
 
 FastGraph::FastGraph(const std::string &yaml_filename) {
-  SPDLOG_WARN("init SYS");
-  showCpuMemCurrProc();
   Yaml::Node config;
-  SPDLOG_INFO("YAML filename: {}", yaml_filename);
   if (fexist(yaml_filename))
     Yaml::Parse(config, yaml_filename.c_str());
   else
-    ASSERT(false);
+    ASSERTWITH(false, "yaml file {} not found", yaml_filename);
   initLogLevel(config);
   initDataset(config);
   initSplit(config);

@@ -91,17 +91,11 @@ shared_ptr<Batch> gen_batch_from_graph(Tensor x, Tensor y,
 BatchWorker::BatchWorker(Yaml::Node &config, shared_ptr<Dataset> dataset,
                          const std::string &name)
     : dataset_(dataset) {
-  initSampler(config["loader"][name]);
+  initSampler(config["sampler"][name]);
   initDevice(config);
   initGraphType(config);
   initScheduler(config);
-  load_x_ = config["performance"]["need_x"].As<bool>(true);
-  if (config["performance"]["uvm"].As<int>(0)) {
-    if (load_x_) {
-      SPDLOG_WARN("Using UVM, no need to load x");
-    }
-    load_x_ = false;
-  }
+  load_x_ = config["loading"]["feat_mode"].As<int>(-1) >= 2;
 }
 
 shared_ptr<Batch> BatchWorker::get() { return get_batch(); }
@@ -136,8 +130,7 @@ void BatchWorker::set_split(shared_ptr<Split> split) {
 }
 
 void BatchWorker::initGraphType(Yaml::Node &config) {
-  std::string output_type =
-      config["performance"]["output_graph_type"].As<string>();
+  std::string output_type = config["output"]["graph_type"].As<string>();
   if (output_type == "COO")
     output_graph_type_ = GraphType::COO;
   else if (output_type == "CSR")
