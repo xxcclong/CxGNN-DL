@@ -44,16 +44,16 @@ class DatasetTemplate : public Dataset {
     // open feature file
     string feature_path = dataset_path + "/processed/node_features.dat";
     SPDLOG_WARN("Loading node features from {}", feature_path);
-    int feat_mode = config["loading"]["feat_mode"].As<int>(-1);
+    string feat_mode = config["loading"]["feat_mode"].As<string>();
     FileType read_mode = FileType::empty;
-    if (feat_mode <= 1)
+    if (feat_mode == "empty" || feat_mode == "uvm")
       read_mode = FileType::empty;
-    else if (feat_mode == 2)
+    else if (feat_mode == "memory")
       read_mode = FileType::memory;
-    else if (feat_mode == 3)
+    else if (feat_mode == "mmap")
       read_mode = FileType::mmap;
     else {
-      ASSERTWITH(false, "feat_mode must be 0, 1, 2, or 3");
+      ASSERTWITH(false, "feat_mode is {}", feat_mode);
     }
     feature_handler_ = make_shared<FileHandler>(feature_path, read_mode);
     feature_handler_->openFile();

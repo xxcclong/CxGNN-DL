@@ -95,7 +95,8 @@ BatchWorker::BatchWorker(Yaml::Node &config, shared_ptr<Dataset> dataset,
   initDevice(config);
   initGraphType(config);
   initScheduler(config);
-  load_x_ = config["loading"]["feat_mode"].As<int>(-1) >= 2;
+  auto feat_mode = config["loading"]["feat_mode"].As<std::string>();
+  load_x_ = feat_mode == "memory" || feat_mode == "disk";
 }
 
 shared_ptr<Batch> BatchWorker::get() { return get_batch(); }

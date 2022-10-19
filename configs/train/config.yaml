@@ -1,0 +1,13 @@
+defaults:
+  - model: sage
+
+train:
+  num_epochs: 3
+  eval_begin: 100
+  early_stop_patience: 10
+
+
+optimizer:
+  type: adam
+  lr: 0.0001
+  scheduler: cos
