@@ -19,15 +19,10 @@ SamplerReturnType FullSampler::sample(const shared_ptr<Graph> &graph,
 }
 
 CpuFullSampler::CpuFullSampler(Yaml::Node &config) {
-  Yaml::Node &fanout = config["fanouts"];
-  ASSERTWITH(fanout.IsSequence(), "fanouts");
-  int cnt = 0;
-  for (auto it = fanout.Begin(); it != fanout.End(); it++) {
-    fanouts_.push_back((*it).second.As<int>());
-    cnt++;
-    if (cnt > 10) throw std::runtime_error("Too many layer fanouts");
-  }
-  ASSERT(fanouts_.size() > 0);
+  batch_size_ = config["batch_size"].As<int>(0);
+  ASSERT(batch_size_ > 0 || batch_size_ == -1);
+  num_layer_ = config["num_layer"].As<int>(0);
+  ASSERT(num_layer_ > 0);
 }
 
 inline void expand(const shared_ptr<Graph> &graph,
@@ -51,7 +46,8 @@ inline void expand(const shared_ptr<Graph> &graph,
 SamplerReturnType CpuFullSampler::sample(const shared_ptr<Graph> &graph,
                                          GraphType type) {
   assert(type == GraphType::CSR_Layer);
-  std::vector<Index> seed_nodes = split_->sample(-1);  // all the nodes in a set
+  std::vector<Index> seed_nodes =
+      split_->sample(batch_size_);  // all the nodes in a set
   if (seed_nodes.size() == 0)
     return std::make_tuple(nullptr, std::vector<Index>(), std::vector<Index>());
   SubgraphIndex subgraph_index;
@@ -66,7 +62,7 @@ SamplerReturnType CpuFullSampler::sample(const shared_ptr<Graph> &graph,
   }
   dest.push_back(0);
 
-  for (int layer_id = fanouts_.size() - 1; layer_id >= 0; --layer_id) {
+  for (int layer_id = num_layer_ - 1; layer_id >= 0; --layer_id) {
     for (Index i = seed_begin; i < seed_end; ++i) {
       expand(graph, subgraph_index, src, dest, i);
     }

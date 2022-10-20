@@ -95,7 +95,8 @@ class CpuFullSampler : public Sampler {
                                    GraphType type = GraphType::COO) override;
 
  protected:
-  vector<int> fanouts_;
+  Index batch_size_ = -1;
+  int num_layer_ = -1;
 };
 
 class CpuKHopSampler : public Sampler {

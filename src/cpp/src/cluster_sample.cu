@@ -4,7 +4,16 @@
 ClusterSampler::ClusterSampler(Yaml::Node &config) {
   batch_size_ = config["batch_size"].As<int>(0);
   num_layers_ = config["num_layer"].As<int>(0);
-  cluster_mode = (ClusterAggrType)config["gas"].As<int>(0);
+  string cluster_name = config["cluster_mode"].As<string>();
+  if (cluster_name == "clustergcn")
+    cluster_mode = ClusterAggrType::ClusterGCN;
+  else if (cluster_name == "gas")
+    cluster_mode = ClusterAggrType::GAS;
+  else if (cluster_name == "graphfm")
+    cluster_mode = ClusterAggrType::GraphFM;
+  else {
+    ASSERTWITH(false, "the cluster mode is invalid {}", cluster_name);
+  }
   ASSERT(batch_size_ > 0);
   ASSERT(num_layers_ > 0);
 }

@@ -5,6 +5,7 @@
 #include "common.h"
 #include "fastgraph.h"
 #include "loader.h"
+#include "memory_access.h"
 namespace py = pybind11;
 using namespace pybind11::literals;
 
@@ -43,6 +44,15 @@ void init_fastgraph(py::module &m) {
       .def_readwrite("test_loader", &FastGraph::test_loader);
 }
 
+void init_memory_access(py::module &m) {
+  m.def("uvm_select", &uvm_select, "");
+  m.def("uvm_select_masked", &uvm_select_masked, "");
+  m.def("uvm_select_half", &uvm_select_half, "");
+  m.def("uvm_select_masked_half", &uvm_select_masked_half, "");
+  m.def("gen_mmap", &gen_mmap, "");
+  m.def("mmap_select", &mmap_select, "");
+}
+
 void init_util(py::module &m) {
   m.def("show_mem_curr_proc", &showCpuMemCurrProc,
         "Show memory usage of current proc");
@@ -53,4 +63,5 @@ PYBIND11_MODULE(cxgnndl_backend, m) {
   init_batch(m);
   init_fastgraph(m);
   init_util(m);
+  init_memory_access(m);
 }

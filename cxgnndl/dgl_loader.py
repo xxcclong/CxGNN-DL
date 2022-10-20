@@ -11,6 +11,8 @@ class DGLLoader:
             root=config.dataset.path.strip(config.dataset.name))
         splitted_idx = self.dataset.get_idx_split()
         graph, labels = self.dataset[0]
+        srcs, dsts = graph.all_edges()
+        graph.add_edges(dsts, srcs)
         labels = labels[:, 0]
         graph.ndata['features'] = graph.ndata.pop('feat')
         graph.ndata['labels'] = labels
@@ -44,7 +46,7 @@ class DGLLoader:
             batch_size=config.sampler.train.batch_size,
             shuffle=True,
             drop_last=False,
-            num_workers=4)
+            num_workers=16)
 
         self.val_loader = dgl.dataloading.NodeDataLoader(
             self.graph,

@@ -12,7 +12,7 @@ Split::Split(Yaml::Node &config, std::string split, int out_upper_limit,
     : upper_limit(out_upper_limit), shuffle(shuffle) {
   string dataset_path = config["dataset"]["path"].As<string>();
   string split_type = config["dataset"]["split_type"].As<string>();
-  bool is_cluster = config["sampler"].As<string>() == "cluster";
+  bool is_cluster = config["sampler"][split]["name"].As<string>() == "cluster";
   string split_idx_path = dataset_path + "/processed/split/" + split_type +
                           "/" + split + "_idx.dat";
   FileHandler split_idx_handler(split_idx_path);

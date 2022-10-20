@@ -1,12 +1,10 @@
 train:
   name: cluster
   batch_size: 6
-  gas: 0
-  replace: False
+  cluster_mode: clustergcn
   num_layer: 3
 eval:
   name: cluster
   batch_size: 6
-  gas: 0
-  replace: False
+  cluster_mode: clustergcn
   num_layer: 3
