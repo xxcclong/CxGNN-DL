@@ -14,7 +14,9 @@ class DGLLoader:
         srcs, dsts = graph.all_edges()
         graph.add_edges(dsts, srcs)
         labels = labels[:, 0]
-        graph.ndata['features'] = graph.ndata.pop('feat')
+        self.feat = dgl.contrib.UnifiedTensor(graph.ndata.pop('feat'),
+                                              device=torch.device(
+                                                  config.device))
         graph.ndata['labels'] = labels
         # in_feats = graph.ndata['features'].shape[1]
         # num_labels = len(
