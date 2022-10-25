@@ -299,14 +299,7 @@ std::vector<torch::Tensor> rel_schedule(shared_ptr<Graph> subgraph,
     output.push_back(ptr_tensor);
     output.push_back(idx_tensor);
     output.push_back(target_tensor);
-
-    // output.push_back(torch::from_blob(sub_ptr.data(), {(int)sub_ptr.size()},
-    // int32_option).clone()); output.push_back(torch::from_blob(sub_idx.data(),
-    // {(int)sub_idx.size()}, int32_option).clone()); output.push_back(
-    //     torch::from_blob(sub_target.data(), {(int)sub_target.size()},
-    //     int32_option).clone());
   }
   output.push_back(rel_num_node_in_layer_tensor);
-  // std::vector<torch::Tensor> output2;
   return output;
 }

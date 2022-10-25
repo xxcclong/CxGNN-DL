@@ -46,7 +46,8 @@ class DatasetTemplate : public Dataset {
     SPDLOG_WARN("Loading node features from {}", feature_path);
     string feat_mode = config["loading"]["feat_mode"].As<string>();
     FileType read_mode = FileType::empty;
-    if (feat_mode == "empty" || feat_mode == "uvm")
+    if (feat_mode == "empty" || feat_mode == "uvm" ||
+        feat_mode == "history_uvm" || feat_mode == "history_mmap")
       read_mode = FileType::empty;
     else if (feat_mode == "memory")
       read_mode = FileType::memory;

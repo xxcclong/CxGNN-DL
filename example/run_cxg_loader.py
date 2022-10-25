@@ -65,7 +65,7 @@ def main(config: DictConfig):
             # to_dgl_block(batch)
             # print(batch)
             # print(batch[2][0].type)
-            if config.type == "dgl":
+            if config.type == "dgl" and config.loading.feat_mode == "uvm":
                 load_subtensor_uvm(loader.feat,
                                    loader.graph.ndata['labels'],
                                    batch[1],

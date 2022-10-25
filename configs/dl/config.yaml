@@ -24,3 +24,5 @@ compute_schedule:
   iter_limit: 10
 output:
   graph_type: CSR_Layer
+dgl:
+  num_thread: 1

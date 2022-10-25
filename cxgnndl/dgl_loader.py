@@ -14,9 +14,10 @@ class DGLLoader:
         srcs, dsts = graph.all_edges()
         graph.add_edges(dsts, srcs)
         labels = labels[:, 0]
-        self.feat = dgl.contrib.UnifiedTensor(graph.ndata.pop('feat'),
-                                              device=torch.device(
-                                                  config.device))
+        if config.loading.feat_mode in ["uvm"]:
+            self.feat = dgl.contrib.UnifiedTensor(graph.ndata.pop('feat'),
+                                                  device=torch.device(
+                                                      config.device))
         graph.ndata['labels'] = labels
         # in_feats = graph.ndata['features'].shape[1]
         # num_labels = len(
@@ -40,6 +41,8 @@ class DGLLoader:
             config.sampler.train.fanouts[::-1])
         val_sampler = dgl.dataloading.MultiLayerNeighborSampler(
             config.sampler.eval.fanouts[::-1])
+        num_thread = config.dgl.num_thread
+        assert num_thread >= 0 and num_thread <= 32
         self.train_loader = dgl.dataloading.NodeDataLoader(
             self.graph,
             train_nid,
@@ -48,7 +51,7 @@ class DGLLoader:
             batch_size=config.sampler.train.batch_size,
             shuffle=True,
             drop_last=False,
-            num_workers=16)
+            num_workers=num_thread)
 
         self.val_loader = dgl.dataloading.NodeDataLoader(
             self.graph,
@@ -58,7 +61,7 @@ class DGLLoader:
             batch_size=config.sampler.eval.batch_size,
             shuffle=False,
             drop_last=False,
-            num_workers=4)
+            num_workers=num_thread)
 
         self.test_loader = dgl.dataloading.NodeDataLoader(
             self.graph,
@@ -68,4 +71,4 @@ class DGLLoader:
             batch_size=config.sampler.eval.batch_size,
             shuffle=False,
             drop_last=False,
-            num_workers=4)
+            num_workers=num_thread)
