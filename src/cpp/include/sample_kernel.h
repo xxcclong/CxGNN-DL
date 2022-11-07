@@ -6,7 +6,6 @@
 #include "subgraph_index.h"
 
 using torch::Tensor;
-std::vector<Tensor> neighbor_sample(const std::vector<Index>& ptr,
-                                    const std::vector<Index>& idx,
+std::vector<Tensor> neighbor_sample(Tensor ptr, Tensor idx,
                                     const std::vector<int>& fanouts,
-                                    const std::vector<Index>& seed_nodes);
+                                    Tensor seed_nodes);

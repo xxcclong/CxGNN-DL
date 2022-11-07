@@ -1,6 +1,7 @@
 import torch
 import dgl
 import cxgnndl_backend
+import time
 
 
 class CustomNeighborSampler(dgl.dataloading.Sampler):
@@ -17,8 +18,7 @@ class CustomNeighborSampler(dgl.dataloading.Sampler):
         # print(type(self.fanouts))
         # print(type(seed_nodes))
         ptr, idx, input_nodes, num_node_in_layer, num_edge_in_layer = cxgnndl_backend.neighbor_sample(
-            full_ptr.tolist(), full_idx.tolist(), self.fanouts,
-            seed_nodes.tolist())
+            full_ptr, full_idx, self.fanouts, seed_nodes)
         subgs = []
         num_layer = len(self.fanouts)
         for i in range(len(num_node_in_layer) - 1):
@@ -71,7 +71,7 @@ class CustomDGLLoader:
                                                   device=torch.device(
                                                       config.device))
         else:
-            assert False, "Not implemented"
+            self.feat = None
         graph.ndata['labels'] = labels
         # in_feats = graph.ndata['features'].shape[1]
         # num_labels = len(
