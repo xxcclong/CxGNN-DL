@@ -6,6 +6,7 @@
 #include "fastgraph.h"
 #include "loader.h"
 #include "memory_access.h"
+#include "sample_kernel.h"
 namespace py = pybind11;
 using namespace pybind11::literals;
 
@@ -58,10 +59,15 @@ void init_util(py::module &m) {
         "Show memory usage of current proc");
 }
 
+void init_sample_kernel(py::module &m) {
+  m.def("neighbor_sample", &neighbor_sample, "sample kernel");
+}
+
 PYBIND11_MODULE(cxgnndl_backend, m) {
   m.doc() = "A Supa Fast Graph Loader";
   init_batch(m);
   init_fastgraph(m);
   init_util(m);
   init_memory_access(m);
+  init_sample_kernel(m);
 }

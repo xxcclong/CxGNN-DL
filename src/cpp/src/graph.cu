@@ -215,3 +215,35 @@ shared_ptr<Graph> Graph::induce(const SubgraphIndex &subgraph_index) {
   graph->setSubgraphIdx(subgraph_index);
   return graph;
 }
+
+// shared_ptr<Graph> Graph::induceLayered(
+//     const SubgraphIndex &subgraph_index, Index num_seed, int num_layer,
+//     const std::vector<Index> &num_node_in_layer) {
+//   std::vector<Index> new_ptr(subgraph_index.sub_to_full.size() + 1, 0);
+//   std::vector<Index> new_idx;  // size is unknown
+//   ASSERT(this->hasCSR());
+//   std::vector<Index> new_num_node_in_layer(num_layer + 1, 0);
+//   std::vector<Index> new_num_edge_in_layer(num_layer, 0);
+//   new_num_node_in_layer[0] = num_seed;
+//   Index layered_cnt = num_seed;
+//   int layer_curr = 0;
+//   for (Index i = 0; i < subgraph_index.sub_to_full.size(); ++i) {
+//     Index node = subgraph_index.sub_to_full[i];
+//     Index begin = this->csr_ptr[node], end = this->csr_ptr[node + 1];
+//     Index cnt = 0;
+//     for (Index j = begin; j < end; ++j) {
+//       auto iter = subgraph_index.full_to_sub.find(this->csr_idx[j]);
+//       if (iter != subgraph_index.full_to_sub.end()) {
+//         ++cnt;
+//         new_idx.push_back(iter->second);
+//       }
+//     }
+//     new_ptr[i + 1] = new_ptr[i] + cnt;
+//     if (i == layered_cnt - 1) {
+//       new_num_node_in_layer[layer_curr + 1] = ;
+//     }
+//   }
+//   auto graph = make_shared<Graph>(std::move(new_ptr), std::move(new_idx));
+//   graph->setSubgraphIdx(subgraph_index);
+//   return graph;
+// }
