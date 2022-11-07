@@ -130,4 +130,17 @@ class ClusterSampler : public Sampler {
   ClusterAggrType cluster_mode = ClusterAggrType::ClusterGCN;
 };
 
+class SaintSampler : public Sampler {
+ public:
+  SaintSampler(Yaml::Node &config);
+
+  virtual SamplerReturnType sample(const shared_ptr<Graph> &graph,
+                                   GraphType type = GraphType::COO) override;
+
+ protected:
+  Index batch_size_ = 0;  // number of edges
+  int num_layers_ = 0;
+  vector<int> fanouts_;
+};
+
 #endif

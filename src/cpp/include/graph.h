@@ -66,6 +66,9 @@ class Graph {
     num_edge_in_layer = std::move(out_num_edge_in_layer);
   }
   shared_ptr<Graph> induce(const SubgraphIndex &subgraph_index);
+  shared_ptr<Graph> induceLayered(const SubgraphIndex &subgraph_index,
+                                  Index num_seed, int num_layer,
+                                  const std::vector<Index> &num_node_in_layer);
   void setSubgraphIdx(SubgraphIndex &&subgraph_index) {
     this->subgraph_index = std::move(subgraph_index);
   }

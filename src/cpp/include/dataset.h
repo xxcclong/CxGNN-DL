@@ -88,20 +88,4 @@ class DatasetTemplate : public Dataset {
   }
 };
 
-class Stage1Graph {
- public:
-  shared_ptr<Graph> graph;
-  Tensor x, y;
-  shared_ptr<Split> split;
-  shared_ptr<Dataset> parent_dataset;
-  // flat_hash_map<Index, Index> inv_split;
-  Stage1Graph(shared_ptr<Graph> graph, Tensor x, Tensor y,
-              shared_ptr<Split> split, shared_ptr<Dataset> parent_dataset)
-      : graph(graph),
-        x(x),
-        y(y),
-        split(split),
-        parent_dataset(parent_dataset) {}
-};
-
 #endif

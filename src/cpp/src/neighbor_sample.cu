@@ -41,11 +41,9 @@ SamplerReturnType CpuNeighborSampler::postSample(
   std::vector<Index> mask_in_sub(seed_nodes.size());
   std::iota(mask_in_sub.begin(), mask_in_sub.end(), 0);
   shared_ptr<Graph> sampled_graph = nullptr;
-  if (type == GraphType::COO)
+  if (type == GraphType::COO) {
     src.insert(src.end(), std::make_move_iterator(dest.begin()),
                std::make_move_iterator(dest.end()));
-
-  if (type == GraphType::COO) {
     sampled_graph = make_shared<Graph>(std::move(src));
     sampled_graph->setNumNode(subgraph_index.num_nodes);
     sampled_graph->setLayerInfo(std::move(num_node_in_layer),

@@ -27,6 +27,8 @@ shared_ptr<Sampler> Sampler::create(Yaml::Node &config) {
     return make_shared<CpuNeighborTypeSampler>(config);
   else if (sampler == "cluster")
     return make_shared<ClusterSampler>(config);
+  else if (sampler == "saint")
+    return make_shared<SaintSampler>(config);
   else
     throw std::runtime_error("Unknown sampler: " + sampler);
 }

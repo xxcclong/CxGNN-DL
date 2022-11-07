@@ -18,6 +18,8 @@ class DGLLoader:
             self.feat = dgl.contrib.UnifiedTensor(graph.ndata.pop('feat'),
                                                   device=torch.device(
                                                       config.device))
+        else:
+            assert False, "Not implemented"
         graph.ndata['labels'] = labels
         # in_feats = graph.ndata['features'].shape[1]
         # num_labels = len(
