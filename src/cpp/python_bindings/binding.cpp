@@ -52,6 +52,7 @@ void init_memory_access(py::module &m) {
   m.def("uvm_select_masked_half", &uvm_select_masked_half, "");
   m.def("gen_mmap", &gen_mmap, "");
   m.def("mmap_select", &mmap_select, "");
+  m.def("read_to_ptr", &read_to_ptr, "");
 }
 
 void init_util(py::module &m) {

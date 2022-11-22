@@ -163,3 +163,16 @@ torch::Tensor gen_mmap(std::string path, int feature_len, int data_length) {
 torch::Tensor mmap_select(torch::Tensor buffer, torch::Tensor index) {
   return buffer.index({index});
 }
+
+void read_to_ptr(int64_t ptr, std::string path, int64_t size) {
+  int fd = open(path.c_str(), O_RDONLY);
+  ASSERT(fd >= 0);
+  int64_t offset = 0;
+  while (size > 0) {
+    int64_t read_size = pread(fd, (char *)ptr + offset, size, offset);
+    ASSERT(read_size > 0);
+    size -= read_size;
+    offset += read_size;
+  }
+  close(fd);
+}

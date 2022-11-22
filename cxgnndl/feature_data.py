@@ -25,10 +25,18 @@ class UVM:
         if not self.dry_run:
             if self.mode == "uvm":
                 print("==== Using memory ====")
-                if "twitter" in buffer_path or "friendster" in buffer_path or "mag240m" in buffer_path:
+                if "twitter" in buffer_path or "friendster" in buffer_path:
+                    log.warn("EMTPY for twitter and friendster")
                     self.buffer = torch.empty(
                         [self.num_node, self.in_channel],
                         dtype=self.torch_type).pin_memory()
+                elif "rmag240m" in buffer_path.lower():
+                    self.buffer = torch.empty([self.num_node, self.in_channel],
+                                              dtype=torch.float16,
+                                              pin_memory=True)
+                    cxgnndl_backend.read_to_ptr(
+                        self.buffer.data_ptr(), buffer_path,
+                        self.num_node * self.in_channel * 2)
                 else:
                     arr = np.fromfile(buffer_path, dtype=self.data_type)
                     arr = arr.reshape([-1, self.in_channel])
@@ -42,6 +50,8 @@ class UVM:
                     buffer_path, self.in_channel,
                     32 if self.data_type == np.float32 else 16)
                 print(self.buffer.shape)
+            elif self.mode == "random":
+                pass
             else:
                 assert False, "Unknown mode: " + self.mode
         self.device = torch.device(config["device"])
@@ -90,6 +100,9 @@ class UVM:
         elif self.mode == "mmap":
             output = cxgnndl_backend.mmap_select(self.buffer,
                                                  index.cpu()).to(self.device)
+        elif self.mode == "random":
+            output = torch.randn([index.shape[0], self.in_channel],
+                                 device=self.device)
         else:
             assert False, "Unknown mode: " + self.mode
         # torch.cuda.synchronize()

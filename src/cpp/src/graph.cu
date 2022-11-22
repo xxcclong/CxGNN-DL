@@ -45,7 +45,8 @@ Graph::Graph(Yaml::Node &config) : config(config) {
   bool etype_schedule =
       config["compute_schedule"]["etype_schedule"].As<bool>(false);
   bool load_edge_type = false;
-  if (model_name == "RGCN" || etype_schedule) {
+  if (model_name == "RGCN" || model_name == "rgcn" || etype_schedule) {
+    SPDLOG_WARN("loading edge types");
     load_edge_type = true;
   }
   string subfix = "directed";
@@ -139,13 +140,6 @@ Graph::Graph(std::vector<Index> &&out_csr_ptr, std::vector<Index> &&out_csr_idx,
       num_node_in_layer(std::move(out_num_node_in_layer)) {
   num_node_ = csr_ptr.size() - 1;
   num_edge_ = csr_idx.size();
-  // if (layered()) {
-  //   ASSERTWITH(*std::max_element(num_node_in_layer.begin(),
-  //   num_node_in_layer.end()) == num_node_,
-  //              "{} {}", num_node_,
-  //              *std::max_element(num_node_in_layer.begin(),
-  //              num_node_in_layer.end()));
-  // }
   csr_avail_ = true;
 }
 
