@@ -1,5 +1,5 @@
 method: grad
-staleness_thres: 50
+staleness_thres: 200
 rate: 0.5
 graph_struct_norm: 1
 buffer_size: 2000000

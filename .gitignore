@@ -133,3 +133,4 @@ example/outputs/*
 outputs/*
 multirun/*
 *.pt
+*.pdf

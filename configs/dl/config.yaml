@@ -11,6 +11,8 @@ performance:
   transfer:
     num_thread: 4
     max_in_flight: 4
+  dry_run: False
+  cache_size: 0
 testing:
   train_shuffle: True
   eval_shuffle: False
@@ -26,3 +28,5 @@ output:
   graph_type: CSR_Layer
 dgl:
   num_thread: 1
+mmap:
+  random: True

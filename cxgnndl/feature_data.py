@@ -25,11 +25,12 @@ class UVM:
         if not self.dry_run:
             if self.mode == "uvm":
                 print("==== Using memory ====")
-                if "twitter" in buffer_path or "friendster" in buffer_path:
+                # if "twitter" in buffer_path or "friendster" in buffer_path:
+                if 1:
                     log.warn("EMTPY for twitter and friendster")
                     self.buffer = torch.empty(
                         [self.num_node, self.in_channel],
-                        dtype=self.torch_type).pin_memory()
+                        dtype=self.torch_type, pin_memory=True)
                 elif "rmag240m" in buffer_path.lower():
                     self.buffer = torch.empty([self.num_node, self.in_channel],
                                               dtype=torch.float16,
@@ -46,9 +47,12 @@ class UVM:
                     self.buffer = torch.from_numpy(arr).pin_memory()
             elif self.mode == "mmap":
                 print("==== Using MMAP ====")
+                if "twitter" in buffer_path or "friendster" in buffer_path or "arxiv" in buffer_path:
+                    log.warn(f"EMTPY for {buffer_path}")
+                    buffer_path = "/mnt/data/huangkz/rmag240m/processed/node_features.dat"
                 self.buffer = cxgnndl_backend.gen_mmap(
                     buffer_path, self.in_channel,
-                    32 if self.data_type == np.float32 else 16)
+                    32 if self.data_type == np.float32 else 16, config["mmap"]["random"])
                 print(self.buffer.shape)
             elif self.mode == "random":
                 pass
@@ -64,7 +68,6 @@ class UVM:
         self.hit_rate_arr = []
 
     def init_cache(self, config, percent=0.1):
-        assert self.mode == 1
         ptr_datapath = path.join(str(config["dataset"]["path"]), "processed",
                                  "csr_ptr_undirected.dat")
         ptr = torch.from_numpy(np.fromfile(ptr_datapath,
@@ -99,7 +102,7 @@ class UVM:
                                                          index).float()
         elif self.mode == "mmap":
             output = cxgnndl_backend.mmap_select(self.buffer,
-                                                 index.cpu()).to(self.device)
+                                                 index.cpu()).to(self.device).float()
         elif self.mode == "random":
             output = torch.randn([index.shape[0], self.in_channel],
                                  device=self.device)
@@ -125,7 +128,7 @@ class UVM:
         elif self.mode == "mmap":
             output = cxgnndl_backend.mmap_select(
                 self.buffer,
-                index.masked_fill_(~(mask.bool()), 0).cpu()).to(self.device)
+                index.masked_fill_(~(mask.bool()), 0).cpu()).to(self.device).float()
         else:
             assert False, "Unknown mode: " + self.mode
         # torch.cuda.synchronize()

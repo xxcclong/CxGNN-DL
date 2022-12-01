@@ -136,14 +136,17 @@ torch::Tensor uvm_select_masked_half(torch::Tensor buffer, torch::Tensor index,
   return output;
 }
 
-torch::Tensor gen_mmap(std::string path, int feature_len, int data_length) {
+torch::Tensor gen_mmap(std::string path, int feature_len, int data_length,
+                       bool set_random) {
   auto fd = open(path.c_str(), O_RDONLY, (mode_t)0600);
   struct stat file_info = {0};
   ASSERTWITH(fstat(fd, &file_info) != -1, "error get file size, path {}", path);
   auto mmap_ptr =
       (char *)mmap(0, file_info.st_size, PROT_READ, MAP_SHARED, fd, 0);
-  ASSERTWITH(0 == madvise(mmap_ptr, (intmax_t)file_info.st_size, MADV_RANDOM),
-             "fail madvise {}", path);
+  if (set_random) {
+    ASSERTWITH(0 == madvise(mmap_ptr, (intmax_t)file_info.st_size, MADV_RANDOM),
+               "fail madvise {}", path);
+  }
   torch::Tensor output;
   Index filesize = (Index)file_info.st_size;
   if (data_length == 32) {
@@ -164,6 +167,21 @@ torch::Tensor mmap_select(torch::Tensor buffer, torch::Tensor index) {
   return buffer.index({index});
 }
 
+torch::Tensor mmap_select_st(torch::Tensor buffer, torch::Tensor index) {
+  int num = index.sizes()[0];
+  int dim = buffer.sizes()[1];
+  torch::Tensor output = torch::empty({num, dim}, float32_option);
+  auto ptr = output.data<float>();
+  auto ptr_buffer = buffer.data<float>();
+  auto index_ptr = index.data<Index>();
+  for (int i = 0; i < num; i++) {
+    for (int j = 0; j < dim; j++) {
+      ptr[i * dim + j] = ptr_buffer[index_ptr[i] * dim + j];
+    }
+  }
+  return output;
+}
+
 void read_to_ptr(int64_t ptr, std::string path, int64_t size) {
   int fd = open(path.c_str(), O_RDONLY);
   ASSERT(fd >= 0);
@@ -175,4 +193,36 @@ void read_to_ptr(int64_t ptr, std::string path, int64_t size) {
     offset += read_size;
   }
   close(fd);
+}
+
+std::vector<torch::Tensor> graph_analysis(torch::Tensor ptr, torch::Tensor idx,
+                                          std::vector<Index> train_nid,
+                                          Index num_node, int num_layer) {
+  std::vector<Index> new_train_nid;
+  std::vector<bool> visit_map(num_node, false);
+  for (auto nid : train_nid) {
+    visit_map[nid] = true;
+  }
+  std::vector<torch::Tensor> output;
+  for (int layer_id = 0; layer_id < num_layer; ++layer_id) {
+    output.push_back(torch::zeros({num_node}, int64_option));
+  }
+  auto ptr_ptr = ptr.data<Index>();
+  auto idx_ptr = idx.data<Index>();
+  for (int layer_id = 0; layer_id < num_layer; ++layer_id) {
+    new_train_nid = train_nid;
+    auto cnt_ptr = output[layer_id].data<Index>();
+    for (auto nid : train_nid) {
+      for (Index i = ptr_ptr[nid]; i < ptr_ptr[nid + 1]; ++i) {
+        if (!visit_map[idx_ptr[i]]) {
+          new_train_nid.push_back(idx_ptr[i]);
+          visit_map[idx_ptr[i]] = true;
+        }
+        cnt_ptr[idx_ptr[i]] += 1;
+      }
+    }
+    train_nid = new_train_nid;
+    SPDLOG_INFO("layer {}, num {}", layer_id, train_nid.size());
+  }
+  return output;
 }

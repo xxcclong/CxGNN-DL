@@ -5,7 +5,7 @@ train:
     - 10
     - 15
     - 20
-  batch_size: 4000
+  batch_size: 1000
   replace: False
   self_loop: True
 eval:

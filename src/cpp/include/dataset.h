@@ -48,12 +48,12 @@ class DatasetTemplate : public Dataset {
     FileType read_mode = FileType::empty;
     if (feat_mode == "empty" || feat_mode == "uvm" ||
         feat_mode == "history_uvm" || feat_mode == "history_mmap" ||
-        feat_mode == "random")
+        feat_mode == "random" || feat_mode == "mmap")
       read_mode = FileType::empty;
     else if (feat_mode == "memory")
       read_mode = FileType::memory;
-    else if (feat_mode == "mmap")
-      read_mode = FileType::mmap;
+    // else if (feat_mode == "mmap")
+    //   read_mode = FileType::mmap;
     else {
       ASSERTWITH(false, "feat_mode is {}", feat_mode);
     }
