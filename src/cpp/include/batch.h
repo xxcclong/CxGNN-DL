@@ -27,7 +27,7 @@ struct Batch {
   Tensor mask;
   Tensor sub_to_full;
 
-  Batch() {}
+  Batch();
 
   // for CSR
   Tensor ptr;

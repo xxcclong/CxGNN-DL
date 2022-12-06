@@ -2,6 +2,8 @@
 #include "common.h"
 // #define PROF_TO
 
+Batch::Batch() {}
+
 Batch::Batch(void *x_data, void *y_data, void *edge_index_data, int num_nodes, int num_features,
              int num_edges, int num_labels) {
   x = torch::from_blob(x_data, {num_nodes, num_features}, float32_option);
