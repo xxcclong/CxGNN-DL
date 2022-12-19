@@ -5,10 +5,11 @@ import torch
 num_device = 4
 num_nodes = 1000000
 feat = 512 // 4
+num_trial = 10
 
 
 output = [None for i in range(num_device)]
-for iter in range(10):
+for iter in range(num_trial):
     arr = []
     for i in range(num_device):
         for j in range(num_device):
@@ -28,7 +29,7 @@ for iter in range(10):
     print("bandwidth1", num_nodes * feat * 4 /
           (time.time() - t0) / 1024 / 1024 / 1024 * 12)
 
-for i in range(10):
+for i in range(num_trial):
     t0 = time.time()
     output = graph_loader_backend.mygather2(arr, num_device)
     for j in range(num_device):
@@ -37,8 +38,7 @@ for i in range(10):
           (time.time() - t0) / 1024 / 1024 / 1024 * 12)
 
 
-
-for i in range(10):
+for i in range(num_trial):
     t0 = time.time()
     output = graph_loader_backend.mygather(arr, num_device)
     for j in range(num_device):

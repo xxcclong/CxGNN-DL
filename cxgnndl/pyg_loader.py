@@ -29,7 +29,7 @@ class PyGLoader:
             edge_index = torch.from_numpy(
                 np.fromfile(f, dtype=np.int64).reshape(2, -1))
             if config.dataset.name in ["twitter", "friendster"]:
-                x = torch.empty([num_nodes, 512], dtype=torch.float32)
+                x = torch.empty([num_nodes, 384], dtype=torch.float32)
             else:
                 x = torch.from_numpy(np.fromfile(
                     open(basedir + "node_features.dat", "rb"), dtype=np.float32).reshape(num_nodes, -1))

@@ -43,15 +43,18 @@ class DatasetTemplate : public Dataset {
     string split_type = config["dataset"]["split_type"].As<string>();
     // open feature file
     string feature_path = dataset_path + "/processed/node_features.dat";
-    SPDLOG_WARN("Loading node features from {}", feature_path);
     string feat_mode = config["loading"]["feat_mode"].As<string>();
     FileType read_mode = FileType::empty;
     if (feat_mode == "empty" || feat_mode == "uvm" ||
         feat_mode == "history_uvm" || feat_mode == "history_mmap" ||
-        feat_mode == "random" || feat_mode == "mmap")
+        feat_mode == "random" || feat_mode == "mmap") {
       read_mode = FileType::empty;
-    else if (feat_mode == "memory")
+      SPDLOG_WARN("feat_mode=empty, no feature access using CPU");
+    } else if (feat_mode == "memory") {
       read_mode = FileType::memory;
+      SPDLOG_WARN("feat_mode=memory, loading node features from {}",
+                  feature_path);
+    }
     // else if (feat_mode == "mmap")
     //   read_mode = FileType::mmap;
     else {

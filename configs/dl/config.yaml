@@ -13,6 +13,7 @@ performance:
     max_in_flight: 4
   dry_run: False
   cache_size: 0
+  prof: 0
 testing:
   train_shuffle: True
   eval_shuffle: False

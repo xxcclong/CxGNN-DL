@@ -8,10 +8,11 @@ class CXGLoader:
         self.backend = cxgnndl_backend.CXGDL("new_config.yaml")
         self.split = 'train'
         self.feat_mode = config["loading"]["feat_mode"]
-        if self.feat_mode in ["mmap", "uvm", "random"]:
-            self.uvm = UVM(config)
-        else:
-            self.uvm = None
+        # if self.feat_mode in ["mmap", "uvm", "random"]:
+        #     self.uvm = UVM(config)
+        # else:
+        #     self.uvm = None
+        self.uvm = None
 
     def __len__(self):
         return self.backend.num_iters()

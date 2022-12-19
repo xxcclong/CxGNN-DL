@@ -14,7 +14,8 @@ class UVM:
         self.in_channel = int(config["dataset"]["feature_dim"])
         buffer_path = path.join(str(config["dataset"]["path"]), "processed",
                                 "node_features.dat")
-        if "mag240m" in buffer_path:
+        dset_name = config.dataset.name.lower()
+        if dset_name in ["mag240m", "rmag240m"]:
             self.data_type = np.float16
             self.torch_type = torch.float16
         else:
@@ -25,14 +26,17 @@ class UVM:
         if not self.dry_run:
             if self.mode == "uvm":
                 print("==== Using memory ====")
-                # if "twitter" in buffer_path or "friendster" in buffer_path:
-                if 1:
-                    log.warn("EMTPY for twitter and friendster")
-                    self.buffer = torch.empty(
+                # if "twitter" in buffer_path or "friendster" in buffer_path or "mag240_384" in buffer_path or "mag240_768" in buffer_path:
+                random_dsets = ["twitter", "friendster",
+                                "mag240m_384", "mag240m_768", "rmag240m_384", "rmag240m_768"]
+                if dset_name in random_dsets:
+                    # if 1:
+                    log.warn(f"EMTPY for {random_dsets}")
+                    self.buffer = torch.randn(
                         [self.num_node, self.in_channel],
                         dtype=self.torch_type, pin_memory=True)
-                elif "rmag240m" in buffer_path.lower():
-                    self.buffer = torch.empty([self.num_node, self.in_channel],
+                elif dset_name == "rmag240m":
+                    self.buffer = torch.randn([self.num_node, self.in_channel],
                                               dtype=torch.float16,
                                               pin_memory=True)
                     cxgnndl_backend.read_to_ptr(
@@ -47,7 +51,8 @@ class UVM:
                     self.buffer = torch.from_numpy(arr).pin_memory()
             elif self.mode == "mmap":
                 print("==== Using MMAP ====")
-                if "twitter" in buffer_path or "friendster" in buffer_path or "arxiv" in buffer_path:
+                # if "twitter" in buffer_path or "friendster" in buffer_path or "arxiv" in buffer_path:
+                if 1:
                     log.warn(f"EMTPY for {buffer_path}")
                     buffer_path = "/mnt/data/huangkz/rmag240m/processed/node_features.dat"
                 self.buffer = cxgnndl_backend.gen_mmap(

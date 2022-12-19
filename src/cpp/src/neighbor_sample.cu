@@ -152,7 +152,7 @@ SamplerReturnType CpuNeighborSampler::sample(const shared_ptr<Graph> &graph,
     ASSERTWITH(type != GraphType::COO || fanout > 0,
                "Cannot use negative fanout, the following code uses fanout to "
                "pre-allocate the buffer");
-    src.resize(src.size() + (seed_end - seed_begin) * fanout);
+    src.resize(src.size() + (seed_end - seed_begin) * (fanout + int(self_loop)));
     if (type == GraphType::COO)
       dest.resize(dest.size() + (seed_end - seed_begin) * fanout);
     // timestamp(t0);
