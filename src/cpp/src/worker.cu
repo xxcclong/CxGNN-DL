@@ -52,6 +52,7 @@ shared_ptr<Batch> gen_batch_from_graph(Tensor x, Tensor y,
 
     batch->setNodeInLayer(subgraph->num_node_in_layer);
     batch->setEdgeInLayer(subgraph->num_edge_in_layer);
+    batch->setEtypeInLayer(subgraph->num_etype_in_layer);
     batch->setSubToFull(subgraph->subgraph_index.sub_to_full);
   } else {
     batch = make_shared<Batch>(
@@ -75,6 +76,7 @@ shared_ptr<Batch> gen_batch_from_graph(Tensor x, Tensor y,
     if (graph_type != GraphType::COO) {
       batch->setNodeInLayer(subgraph->num_node_in_layer);
       batch->setEdgeInLayer(subgraph->num_edge_in_layer);
+      batch->setEtypeInLayer(subgraph->num_etype_in_layer);
       batch->graph_type = graph_type;
     }
   }

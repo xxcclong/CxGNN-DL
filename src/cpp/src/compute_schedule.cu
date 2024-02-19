@@ -255,7 +255,7 @@ vector<shared_ptr<Graph>> ComputeScheduler::breakGraph(
 }
 
 std::vector<torch::Tensor> rel_schedule(shared_ptr<Graph> subgraph,
-                                        const std::vector<int> &rel) {
+                                        const std::vector<EtypeIndex> &rel) {
   int num_rel = 7;
   std::vector<torch::Tensor> output;
   int num_layer = subgraph->num_node_in_layer.size() - 1;

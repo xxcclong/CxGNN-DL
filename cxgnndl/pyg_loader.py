@@ -3,7 +3,7 @@ from torch_geometric.utils import to_undirected
 import torch
 import numpy as np
 from torch_geometric.data import Data
-from torch_geometric_autoscale import permute
+# from torch_geometric_autoscale import permute
 # from collections.abc import Sequence
 
 
@@ -138,7 +138,8 @@ class GASLoader:
             basedir + "cluster_ptr.dat", dtype=np.int64))
         perm = torch.from_numpy(np.fromfile(
             basedir + "cluster.dat", dtype=np.int64))
-        self.data = permute(self.data, perm, log=True)
+        assert False
+        # self.data = permute(self.data, perm, log=True)
 
         def transform_wrapper(func):
 

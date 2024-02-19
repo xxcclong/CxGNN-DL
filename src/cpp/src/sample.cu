@@ -23,7 +23,7 @@ shared_ptr<Sampler> Sampler::create(Yaml::Node &config) {
     return make_shared<FullSampler>();
   else if (sampler == "full_layer")
     return make_shared<CpuFullSampler>(config);
-  else if (sampler == "neighbor_type")
+  else if (sampler == "typed_neighbor")
     return make_shared<CpuNeighborTypeSampler>(config);
   else if (sampler == "cluster")
     return make_shared<ClusterSampler>(config);

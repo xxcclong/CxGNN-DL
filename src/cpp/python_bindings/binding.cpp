@@ -20,6 +20,7 @@ void init_batch(py::module &m) {
       .def_readwrite("idx", &Batch::idx)
       .def_readwrite("num_node_in_layer", &Batch::num_node_in_layer)
       .def_readwrite("num_edge_in_layer", &Batch::num_edge_in_layer)
+      .def_readwrite("num_etype_in_layer", &Batch::num_etype_in_layer)
       .def_readwrite("sub_to_full", &Batch::sub_to_full)
       .def_readwrite("edge_type", &Batch::edge_type)
       .def_readwrite("edge_indexs", &Batch::edge_indexs)

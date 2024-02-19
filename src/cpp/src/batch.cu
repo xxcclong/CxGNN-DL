@@ -66,7 +66,8 @@ void Batch::moveTensors(vector<Tensor> &input_vec, vector<Tensor> &output_vec,
     for (const auto &item : input_vec[i].sizes())
       size *= item;
     if (size == 0) continue;
-    // SPDLOG_INFO("{} {} Byte", i, size * input_vec[i].element_size());
+    // SPDLOG_WARN("{} {} Byte {} <- {}", i, size * input_vec[i].element_size(), 
+    // output_vec[i].device().index(), input_vec[i].device().index());
     // if (i == 0) continue; // DEBUG: donot need X tensor
     checkCudaErrors(
         cudaMemcpyAsync((void *)output_vec[i].data_ptr(), (void *)input_vec[i].data_ptr(),
@@ -254,6 +255,14 @@ void Batch::setEdgeInLayer(const std::vector<Index> &out_edge_in_layer) {
   num_edge_in_layer = torch::empty({size}, int64_option);
   memcpy(num_edge_in_layer.data<Index>(), out_edge_in_layer.data(),
          out_edge_in_layer.size() * sizeof(Index));
+}
+
+void Batch::setEtypeInLayer(const std::vector<Index> &out_etype_in_layer) {
+  int size = out_etype_in_layer.size();
+  if (size == 0) return;
+  num_etype_in_layer = torch::empty({size}, int64_option);
+  memcpy(num_etype_in_layer.data<Index>(), out_etype_in_layer.data(),
+         out_etype_in_layer.size() * sizeof(Index));
 }
 
 void Batch::setMaskInSub(std::vector<Index> &&out_mask_in_sub) {

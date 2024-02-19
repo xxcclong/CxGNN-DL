@@ -3,7 +3,7 @@ defaults:
   - sampler: neighbor
 type: cxg
 num_device: 1
-device: cuda:1
+device: cuda:0
 performance:
   bind_method: 0
   num_thread: 24
@@ -20,7 +20,7 @@ testing:
   num_val_samples: -1
   num_test_samples: -1
 loading:
-  feat_mode: memory # [empty,uvm,memory,mmap]
+  feat_mode: uvm # [empty,uvm,memory,mmap]
 util:
   log_level: 2
 compute_schedule:
@@ -31,3 +31,4 @@ dgl:
   num_thread: 1
 mmap:
   random: True
+dist: ddp # [ddp, tp]

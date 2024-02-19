@@ -84,6 +84,7 @@ class CpuNeighborTypeSampler : public CpuNeighborSampler {
                                SubgraphIndex &subgraph_index,
                                vector<Index> num_node_in_layer,
                                vector<Index> num_edge_in_layer,
+                               vector<Index> num_etype_in_layer,
                                const shared_ptr<Graph> &graph, GraphType type);
 };
 

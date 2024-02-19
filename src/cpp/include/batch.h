@@ -33,7 +33,7 @@ struct Batch {
   Tensor ptr;
   Tensor idx;
   // for layered CSR
-  Tensor num_node_in_layer, num_edge_in_layer;
+  Tensor num_node_in_layer, num_edge_in_layer, num_etype_in_layer;
   Tensor typed_num_node_in_layer;
   // for hetero graph
   Tensor edge_type;
@@ -69,6 +69,8 @@ struct Batch {
   void setNodeInLayer(const vector<Index> &out_node_in_layer);
 
   void setEdgeInLayer(const vector<Index> &out_edge_in_layer);
+
+  void setEtypeInLayer(const vector<Index> &out_etype_in_layer);
 
   void setMaskInSub(std::vector<Index> &&out_mask_in_sub);
 

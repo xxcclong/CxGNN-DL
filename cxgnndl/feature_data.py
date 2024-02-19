@@ -30,13 +30,13 @@ class UVM:
                 random_dsets = ["twitter", "friendster",
                                 "mag240m_384", "mag240m_768", "rmag240m_384", "rmag240m_768"]
                 if dset_name in random_dsets:
-                    # if 1:
+                # if 1:
                     log.warn(f"EMTPY for {random_dsets}")
                     self.buffer = torch.randn(
                         [self.num_node, self.in_channel],
                         dtype=self.torch_type, pin_memory=True)
                 elif dset_name == "rmag240m":
-                    self.buffer = torch.randn([self.num_node, self.in_channel],
+                    self.buffer = torch.empty([self.num_node, self.in_channel],
                                               dtype=torch.float16,
                                               pin_memory=True)
                     cxgnndl_backend.read_to_ptr(
@@ -63,6 +63,7 @@ class UVM:
                 pass
             else:
                 assert False, "Unknown mode: " + self.mode
+            print("==== Finish Loading ====")
         self.device = torch.device(config["device"])
         self.has_cache = False
         if float(config.performance.get("cache_size", 0)) > 0:

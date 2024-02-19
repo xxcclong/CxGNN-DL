@@ -41,13 +41,16 @@ Graph::Graph(Yaml::Node &config) : config(config) {
   // For fullgraph, current implementation does not need the edge index file (if
   // CSR file is available)
   bool load_edge_index = config["dataset"]["no_edge_index"].As<bool>(false);
-  string model_name = config["model"]["type"].As<string>();
+  string sampler_name = config["sampler"]["train"]["name"].As<string>();
   bool etype_schedule =
       config["compute_schedule"]["etype_schedule"].As<bool>(false);
   bool load_edge_type = false;
-  if (model_name == "RGCN" || model_name == "rgcn" || etype_schedule) {
+  if (sampler_name == "typed_neighbor" || etype_schedule) {
     SPDLOG_WARN("loading edge types");
     load_edge_type = true;
+  }
+  else {
+    SPDLOG_WARN("not loading edge types, sampler name {}", sampler_name);
   }
   string subfix = "directed";
   if (symmetric) subfix = "undirected";
@@ -103,6 +106,12 @@ Graph::Graph(Yaml::Node &config) : config(config) {
     ASSERT(fexist(etype_path));
     FileHandler etype_handler(etype_path);
     etype_handler.readAllToVec<EtypeIndex>(edge_type);
+    string num_etype_path = dataset_path + "/processed/num_etypes.txt";
+    ASSERT(fexist(num_etype_path));
+    FILE *fin(fopen(num_etype_path.c_str(), "r"));
+    fscanf(fin, "%ld", &num_etype_);
+    fclose(fin);
+    ASSERTWITH(num_etype_ > 0, "num_etype_ should be positive {}", num_etype_);
   }
   // load CSR
   SPDLOG_WARN("Read/Dump CSR file");

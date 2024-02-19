@@ -7,7 +7,7 @@ CpuNeighborTypeSampler::CpuNeighborTypeSampler(Yaml::Node &config)
 SamplerReturnType CpuNeighborTypeSampler::postSample(
     vector<Index> &src, vector<Index> &dest, vector<EtypeIndex> &edge_type,
     vector<Index> &seed_nodes, SubgraphIndex &subgraph_index,
-    vector<Index> num_node_in_layer, vector<Index> num_edge_in_layer,
+    vector<Index> num_node_in_layer, vector<Index> num_edge_in_layer, vector<Index> num_etype_in_layer,
     const shared_ptr<Graph> &graph, GraphType type) {
   std::vector<Index> mask_in_sub(seed_nodes.size());
   std::iota(mask_in_sub.begin(), mask_in_sub.end(), 0);
@@ -32,6 +32,7 @@ SamplerReturnType CpuNeighborTypeSampler::postSample(
   sampled_graph->setSubgraphIdx(std::move(subgraph_index));
   sampled_graph->setParentGraph(graph);
   sampled_graph->setEdgeType(std::move(edge_type));
+  sampled_graph->setNumEtypeInLayer(std::move(num_etype_in_layer));
   return std::make_tuple(sampled_graph, std::move(seed_nodes),
                          std::move(mask_in_sub));
 }
@@ -39,6 +40,7 @@ SamplerReturnType CpuNeighborTypeSampler::postSample(
 inline void expand(const shared_ptr<Graph> &graph,
                    SubgraphIndex &subgraph_index, std::vector<Index> &src,
                    std::vector<Index> &dest, std::vector<EtypeIndex> &etype,
+                   Index *num_edge_per_rel,
                    Index &head_src, Index &head_dest, uint32_t &random_seed,
                    const Index &sub_id, const int &fanout,
                    const GraphType &type, const bool &replace,
@@ -51,6 +53,7 @@ inline void expand(const shared_ptr<Graph> &graph,
   if (self_loop) {
     src[head_src] = sub_id;
     etype[head_src] = 0;  // self loop type set to 0
+    num_edge_per_rel[0]++;
     ++head_src;
     cnt = 1;
   }
@@ -69,6 +72,7 @@ inline void expand(const shared_ptr<Graph> &graph,
     for (Index j = begin; j < end; ++j) {
       src[head_src] = subgraph_index.addNode(graph->csr_idx[j]);
       etype[head_src] = graph->edge_type[j];
+      num_edge_per_rel[graph->edge_type[j]]++;
       ++head_src;
     }
     cnt += num_neighbor;
@@ -78,6 +82,7 @@ inline void expand(const shared_ptr<Graph> &graph,
       int tmp = randInt(0, num_neighbor, random_seed);
       src[head_src] = subgraph_index.addNode(graph->csr_idx[tmp + begin]);
       etype[head_src] = graph->edge_type[tmp + begin];
+      num_edge_per_rel[graph->edge_type[tmp + begin]]++;
       ++head_src;
     }
     cnt += fanout;
@@ -91,6 +96,7 @@ inline void expand(const shared_ptr<Graph> &graph,
         if (!self_loop || graph->csr_idx[k + begin] != full_id) {
           src[head_src] = subgraph_index.addNode(graph->csr_idx[k + begin]);
           etype[head_src] = graph->edge_type[k + begin];
+          num_edge_per_rel[graph->edge_type[k + begin]]++;
           ++head_src;
           ++cnt;
         }
@@ -118,6 +124,8 @@ SamplerReturnType CpuNeighborTypeSampler::sample(const shared_ptr<Graph> &graph,
   Index seed_end = seed_nodes.size();
   std::vector<Index> num_node_in_layer = {seed_end};
   std::vector<Index> num_edge_in_layer;
+  int num_etype = graph->getNumEtype();
+  std::vector<Index> num_edge_per_rel(num_etype * fanouts_.size(), 0);
   uint32_t random_seed = time(NULL);
 
   preSample(src, dest, subgraph_index, seed_nodes, type);
@@ -135,7 +143,7 @@ SamplerReturnType CpuNeighborTypeSampler::sample(const shared_ptr<Graph> &graph,
       dest.resize(dest.size() + (seed_end - seed_begin) * fanout);
     // timestamp(t0);
     for (Index i = seed_begin; i < seed_end; ++i) {
-      expand(graph, subgraph_index, src, dest, etype, head_src, head_dest,
+      expand(graph, subgraph_index, src, dest, etype, num_edge_per_rel.data() + layer_id * num_etype, head_src, head_dest,
              random_seed, i, fanout, type, replace, self_loop);
     }
     seed_begin = seed_end;
@@ -150,8 +158,14 @@ SamplerReturnType CpuNeighborTypeSampler::sample(const shared_ptr<Graph> &graph,
       if (type == GraphType::CSR || layer_id != 0) {
         dest.resize(subgraph_index.num_nodes + 1);
       }
-    } else if (type == GraphType::COO)
+    } else if (type == GraphType::COO){
       dest.resize(head_dest);
+    }
+    if (layer_id != 0) {
+      for (int _ = 0; _ < num_etype; ++_) {
+        num_edge_per_rel[(layer_id - 1) * num_etype + _] = num_edge_per_rel[layer_id * num_etype + _];
+      }
+    }
   }
   if (type == GraphType::CSR) {
     for (Index i = seed_begin; i < seed_end; ++i) dest[i + 1] = dest[i];
@@ -159,5 +173,5 @@ SamplerReturnType CpuNeighborTypeSampler::sample(const shared_ptr<Graph> &graph,
 
   ASSERT(src.size() == etype.size());
   return postSample(src, dest, etype, seed_nodes, subgraph_index,
-                    num_node_in_layer, num_edge_in_layer, graph, type);
+                    num_node_in_layer, num_edge_in_layer, num_edge_per_rel, graph, type);
 }

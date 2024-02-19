@@ -17,7 +17,7 @@ class Graph {
   // coo var
   std::vector<Index> edge_idx;
   // csr var
-  std::vector<Index> csr_ptr, csr_idx, num_node_in_layer, num_edge_in_layer;
+  std::vector<Index> csr_ptr, csr_idx, num_node_in_layer, num_edge_in_layer, num_etype_in_layer;
   // csr target: in csr format, [ptr[i]:ptr[i + 1]) represents the neighbor of
   // node i if has csr_target, it represents the neighbor of csr_target[i]
   std::vector<Index> csr_target;
@@ -46,6 +46,7 @@ class Graph {
   inline bool hasLabel() const { return label.size() != 0; }
   inline const Index &getNumNode() const { return num_node_; }
   inline const Index &getNumEdge() const { return num_edge_; }
+  inline const int &getNumEtype() const { return num_etype_; }
   inline const Index &getNumUnique() const { return subgraph_index.num_nodes; }
   inline void setNumNode(Index num_node) { num_node_ = num_node; }
   inline void setParentGraph(shared_ptr<Graph> parent_graph) {
@@ -56,6 +57,9 @@ class Graph {
   }
   inline void setNumEdgeInLayer(std::vector<Index> &&out_num_edge_in_layer) {
     num_edge_in_layer = std::move(out_num_edge_in_layer);
+  }
+  inline void setNumEtypeInLayer(std::vector<Index> &&out_num_etype_in_layer) {
+    num_etype_in_layer = std::move(out_num_etype_in_layer);
   }
   inline void setEdgeType(std::vector<EtypeIndex> &&out_edge_type) {
     edge_type = std::move(out_edge_type);
@@ -85,6 +89,7 @@ class Graph {
  protected:
   Index num_node_ = -1;
   Index num_edge_ = -1;
+  int num_etype_ = -1;
   bool coo_avail_ = false;
   bool csr_avail_ = false;
   bool is_full_graph_ = false;

@@ -2,6 +2,7 @@
 #define COMPUTE_SCHEDULE_H
 #include <memory>
 #include <vector>
+#include "common.h"
 using std::shared_ptr;
 using std::vector;
 
@@ -31,5 +32,5 @@ class ComputeScheduler {
 };
 
 std::vector<torch::Tensor> rel_schedule(shared_ptr<Graph> subgraph,
-                                        const std::vector<int> &rel);
+                                        const std::vector<EtypeIndex> &rel);
 #endif

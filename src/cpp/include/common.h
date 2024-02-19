@@ -17,7 +17,7 @@
 #include "spdlog/spdlog.h"
 
 using Index = int64_t;
-using EtypeIndex = int;
+using EtypeIndex = int64_t;
 using std::make_shared;
 using std::make_unique;
 using std::shared_ptr;
