@@ -4,16 +4,16 @@ import torch
 dsets = ["twitter", "friendster", "rmag240m", "mag240m", "papers100M"]
 mmax_num_node = 0
 for dset in dsets:
-    datadir = "/home/huangkz/data/dataset_diskgnn/{}/processed/{}"
+    datadir = "../../../../data/{}/processed/{}"
     if dset in ["twitter", "friendster", "rmag240m"]:
-        datadir = "/mnt/data/huangkz/{}/processed/{}"
+        datadir = "../../../../data/{}/processed/{}"
     num_node = int(
         open(datadir.format(dset, "num_nodes.txt")).readline().strip())
     mmax_num_node = max(mmax_num_node, num_node)
 for dset in dsets:
-    datadir = "/home/huangkz/data/dataset_diskgnn/{}/processed/{}"
+    datadir = "../../../../data/{}/processed/{}"
     if dset in ["twitter", "friendster", "rmag240m"]:
-        datadir = "/mnt/data/huangkz/{}/processed/{}"
+        datadir = "../../../../data/{}/processed/{}"
     num_node = int(
         open(datadir.format(dset, "num_nodes.txt")).readline().strip())
     ptr = numpy.fromfile(datadir.format(

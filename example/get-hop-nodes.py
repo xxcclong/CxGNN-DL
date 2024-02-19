@@ -4,10 +4,10 @@ import torch
 import numpy
 import cxgnndl_backend
 import sys
-datadir = "/home/huangkz/data/dataset_diskgnn/{}/processed/{}"
+datadir = "../../../../data/{}/processed/{}"
 dset = sys.argv[1]
 if dset in ["twitter", "friendster", "rmag240m"]:
-    datadir = "/mnt/data/huangkz/{}/processed/{}"
+    datadir = "../../../../data/{}/processed/{}"
 ptr = numpy.fromfile(datadir.format(
     dset, "csr_ptr_undirected.dat"), dtype=numpy.int64)
 idx = numpy.fromfile(datadir.format(

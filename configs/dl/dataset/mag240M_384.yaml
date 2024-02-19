@@ -1,5 +1,5 @@
 name: mag240m_384
-path: /home/xgx/dataset/diskgnn/mag240m
+path: ../../../../data/mag240m
 split_type: time
 symmetric: True
 num_classes: 153

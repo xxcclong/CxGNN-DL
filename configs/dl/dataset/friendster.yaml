@@ -1,5 +1,5 @@
 name: friendster
-path: /mnt/data/huangkz/friendster
+path: ../../../../data/friendster
 split_type: time
 symmetric: True
 num_classes: 64

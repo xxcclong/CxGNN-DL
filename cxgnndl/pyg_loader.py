@@ -21,9 +21,9 @@ class PyGLoader:
                 self.data.edge_index = to_undirected(self.data.edge_index)
             self.split_idx = self.dataset.get_idx_split()
         else:
-            basedir = f"/home/huangkz/data/dataset_diskgnn/{config.dataset.name}/processed/"
+            basedir = f"../../../../data/{config.dataset.name}/processed/"
             if config.dataset.name in ["twitter", "friendster"]:
-                basedir = f"/mnt/data/huangkz/{config.dataset.name}/processed/"
+                basedir = f"../../../../data/{config.dataset.name}/processed/"
             num_nodes = int(open(basedir + "num_nodes.txt").readline().strip())
             f = open(basedir + "edge_index.dat", "rb")
             edge_index = torch.from_numpy(
@@ -107,9 +107,9 @@ class GASLoader:
                 self.data.edge_index = to_undirected(self.data.edge_index)
             self.split_idx = self.dataset.get_idx_split()
         else:
-            basedir = f"/home/huangkz/data/dataset_diskgnn/{config.dataset.name}/processed/"
+            basedir = f"../../../../data/{config.dataset.name}/processed/"
             if config.dataset.name in ["twitter", "friendster"]:
-                basedir = f"/mnt/data/huangkz/{config.dataset.name}/processed/"
+                basedir = f"../../../../data/{config.dataset.name}/processed/"
             num_nodes = int(open(basedir + "num_nodes.txt").readline().strip())
             f = open(basedir + "edge_index.dat", "rb")
             edge_index = torch.from_numpy(

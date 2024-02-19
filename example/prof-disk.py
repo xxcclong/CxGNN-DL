@@ -4,9 +4,9 @@ import numpy as np
 import cxgnndl_backend
 import sys
 
-datadir = "/home/huangkz/data/dataset_diskgnn/mag240m/processed/node_features.dat"
+datadir = "../../../../data/mag240m/processed/node_features.dat"
 num_nodes = int(open(
-    "/home/huangkz/data/dataset_diskgnn/mag240m/processed/num_nodes.txt").readline().strip())
+    "../../../../data/mag240m/processed/num_nodes.txt").readline().strip())
 feature_len = 384
 method = int(sys.argv[1])
 mmap = cxgnndl_backend.gen_mmap(datadir, feature_len, 32, method == 3)

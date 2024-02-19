@@ -8,9 +8,9 @@ def load_full_graph_structure(name, undirected=True):
     if name in [
             "arxiv", "products", "reddit", "papers100M", "mag240m", "wiki90m"
     ] or "wiki" in name or "papers" in name or "arxiv" in name or "friendster" in name:
-        basedir = "/home/huangkz/data/dataset_diskgnn/"
+        basedir = "../../../../data/"
     elif name in ["rmag240m", "twitter", "friendster"]:
-        basedir = "/mnt/data/huangkz/"
+        basedir = "../../../../data/"
     else:
         assert 0
     if undirected:

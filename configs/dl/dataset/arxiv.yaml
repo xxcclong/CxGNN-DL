@@ -1,5 +1,5 @@
 name: arxiv
-path: /home/xgx/dataset/diskgnn/arxiv
+path: ../../../../data/arxiv
 split_type: time
 symmetric: True
 num_classes: 40

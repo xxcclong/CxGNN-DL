@@ -1,5 +1,5 @@
 name: twitter
-path: /mnt/data/huangkz/twitter
+path: ../../../../data/twitter
 split_type: time
 symmetric: True
 num_classes: 64

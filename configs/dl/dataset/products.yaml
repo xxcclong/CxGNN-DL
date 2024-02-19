@@ -1,5 +1,5 @@
 name: products
-path: /home/xgx/dataset/diskgnn/products
+path: ../../../../data/products
 split_type: sales_ranking
 symmetric: True
 num_classes: 47

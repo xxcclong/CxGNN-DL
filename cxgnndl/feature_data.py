@@ -54,7 +54,7 @@ class UVM:
                 # if "twitter" in buffer_path or "friendster" in buffer_path or "arxiv" in buffer_path:
                 if 1:
                     log.warn(f"EMTPY for {buffer_path}")
-                    buffer_path = "/mnt/data/huangkz/rmag240m/processed/node_features.dat"
+                    buffer_path = "../../../../data/rmag240m/processed/node_features.dat"
                 self.buffer = cxgnndl_backend.gen_mmap(
                     buffer_path, self.in_channel,
                     32 if self.data_type == np.float32 else 16, config["mmap"]["random"])
